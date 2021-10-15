@@ -6,6 +6,7 @@ public class Drink {
     private static final String EMPTY_BLANK = "";
     private static final String ZERO_CHAR = "0";
     private static final String INSTRUCTION_SEPARATOR = ":";
+    private static final String YOU_ONLY_MISSES = "You only misses %s euro to get your drink!";
 
     private DrinkType type;
     private String content;
@@ -48,14 +49,26 @@ public class Drink {
         return type +INSTRUCTION_SEPARATOR + sugarQuantity + INSTRUCTION_SEPARATOR + stick;
     }
 
-    public String makeCoffee(String drinkType, String content) {
-        Drink drink = new Drink(drinkType, content);
-        switch (drink.getType()) {
+    public String makeCoffee(double money) {
+        verifyEnoughMoney(money);
+        switch (this.getType()) {
             case M:
-                return drink.messageInstruction();
+                return this.messageInstruction();
             default:
-                return drink.coffeeInstruction();
+                return this.coffeeInstruction();
         }
+    }
+
+    public void verifyEnoughMoney(double money){
+        double priceDifference = calculatePriceDifference(this.getType() , money);
+        if(priceDifference < 0) {
+            this.type = DrinkType.M;
+            this.content = String.format(YOU_ONLY_MISSES, -priceDifference);
+        }
+    }
+
+    private double calculatePriceDifference(DrinkType type , double money) {
+        return money - type.getPrice();
     }
 
     public static boolean isNumeric(String value) {
@@ -80,4 +93,5 @@ public class Drink {
             }
 
     }
+
 }
