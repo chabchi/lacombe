@@ -1,20 +1,24 @@
 package com.lacombe.kata.coffeeMachine;
 
 
+import java.util.Optional;
+
 public class Drink {
 
     private static final String EMPTY_BLANK = "";
     private static final String ZERO_CHAR = "0";
     private static final String INSTRUCTION_SEPARATOR = ":";
     private static final String YOU_ONLY_MISSES = "You only misses %s euro to get your drink!";
+    private static final String HOT_DRINK_CHAR = "h";
 
     private DrinkType type;
     private String content;
     private boolean withStick;
+    private boolean hot;
 
-    public Drink(String drinkType, String content) {
+    public Drink(String drinkType, String content, boolean...  hot) {
         validateInstruction(drinkType, content);
-        createDrink(drinkType, content);
+        createDrink(drinkType, content, hot);
     }
 
 
@@ -30,9 +34,10 @@ public class Drink {
         return withStick;
     }
 
-    private void createDrink(String drinkType, String content) {
+    private void createDrink(String drinkType, String content, boolean... hot) {
         this.type = DrinkType.get(drinkType);
         this.content = content;
+        this.hot = hot.length > 0 ? hot[0] : false;
         this.withStick = !String.valueOf(content).equals(ZERO_CHAR) ? true : false;
     }
 
@@ -46,7 +51,8 @@ public class Drink {
         String type = this.getType().name();
         String sugarQuantity = Integer.parseInt(this.getContent()) == 0 ? EMPTY_BLANK : this.getContent();
         String stick = this.isWithStick() ? ZERO_CHAR : EMPTY_BLANK;
-        return type +INSTRUCTION_SEPARATOR + sugarQuantity + INSTRUCTION_SEPARATOR + stick;
+        String hotDrink = this.hot ? HOT_DRINK_CHAR : EMPTY_BLANK;
+        return type + hotDrink  + INSTRUCTION_SEPARATOR + sugarQuantity + INSTRUCTION_SEPARATOR + stick;
     }
 
     public String makeCoffee(double money) {
